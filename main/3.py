@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-NUMBER_OF_O_CLASS= 300
+# This script generates and also draws the values on a chart
+
+NUMBER_OF_O_CLASS= 400
 
 cov = [[3, 0], [0, 3]]
 
@@ -25,10 +27,14 @@ print(y[3])
 
 plt.plot(x, y, 'o')
 
+print(len(x))
+
 samplx = np.random.uniform(low=0, high=20, size=(1800,))
 samply = np.random.uniform(low=0, high=20, size=(1800,))
 
 plt.plot(samplx, samply , "+")
+
+print(len(samply))
 
 plt.axis('equal')
 

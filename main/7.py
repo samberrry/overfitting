@@ -66,10 +66,5 @@ dfB = pd.DataFrame(trainingDataB)
 
 trainingData = dfA.append(dfB, ignore_index= True)
 
-# shuffles data
-trainingData = trainingData.sample(frac=1).reset_index(drop=True)
-
 print trainingData
-
-
 
