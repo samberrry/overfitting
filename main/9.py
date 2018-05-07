@@ -122,5 +122,3 @@ def visualize_tree(tree, feature_names):
     except:
         exit("Could not run dot, ie graphviz, to "
              "produce visualization")
-
-visualize_tree(dt, features)

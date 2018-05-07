@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# This script makes data ready to be considered as training and test sets
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+
+# This script makes works with sklearn
 
 NUMBER_OF_O_CLASS= 400
 
@@ -68,8 +70,4 @@ trainingData = dfA.append(dfB, ignore_index= True)
 
 # shuffles data
 trainingData = trainingData.sample(frac=1).reset_index(drop=True)
-
-print trainingData
-
-
 
