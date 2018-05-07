@@ -6,6 +6,8 @@ import subprocess
 
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
+# Prepares test data
+
 NUMBER_OF_CLASS_A = 1800 # + class = classA
 NUMBER_OF_CLASS_B = 1200 # o class = classB
 
