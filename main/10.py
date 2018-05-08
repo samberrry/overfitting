@@ -148,19 +148,39 @@ def encode_target(df, target_column):
     df_mod["Target"] = df_mod[target_column].replace(map_to_int)
 
     return (df_mod, targets)
+# ====================================================================
 
 df2, targets = encode_target(trainingData, "class")
 
 features = list(df2.columns[1:3])
-y = df2["class"]
+y = df2["Target"]
 X = df2[features]
 
-dt = DecisionTreeClassifier(min_samples_split=20)
+condition = 10
+# while True:
+#     condition += 10
+#     dt = DecisionTreeClassifier(criterion="gini", max_leaf_nodes= condition)
+#     dt.fit(X, y)
+#     # DO what you want
+#     if condition > 220:
+#         break
+
+dt = DecisionTreeClassifier(criterion= "gini", max_leaf_nodes= 20)
 dt.fit(X, y)
+
+# Prepare for testing the constructed moddel
+testDF, testTargets = encode_target(testData, "class")
+
+# testFeatures contains feature column list
+testFeatures = list(testDF.columns[1:3])
+
+# testX only contains two 'x' and 'y' columns with their values
+testX = testDF[testFeatures]
+
+yTest = dt.predict(testX)
 
 def visualize_tree(tree, feature_names):
     """Create tree png using graphviz.
-
     Args
     ----
     tree -- scikit-learn DecsisionTree.
@@ -178,3 +198,6 @@ def visualize_tree(tree, feature_names):
              "produce visualization")
 
 visualize_tree(dt, features)
+
+print(df2)
+print(targets)

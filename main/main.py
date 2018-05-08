@@ -150,10 +150,10 @@ def encode_target(df, target_column):
 df2, targets = encode_target(trainingData, "class")
 
 features = list(df2.columns[1:3])
-y = df2["class"]
+y = df2["Target"]
 X = df2[features]
 
-dt = DecisionTreeClassifier(min_samples_split=20)
+dt = DecisionTreeClassifier(criterion= "gini", min_samples_split=20)
 dt.fit(X, y)
 
 def visualize_tree(tree, feature_names):
