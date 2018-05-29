@@ -149,6 +149,23 @@ def encode_target(df, target_column):
 
     return (df_mod, targets)
 # ====================================================================
+def visualize_tree(tree, feature_names):
+    """Create tree png using graphviz.
+    Args
+    ----
+    tree -- scikit-learn DecsisionTree.
+    feature_names -- list of feature names.
+    """
+    with open("dt.dot", 'w') as f:
+        export_graphviz(tree, out_file=f,
+                        feature_names=feature_names)
+
+    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+    try:
+        subprocess.check_call(command)
+    except:
+        exit("Could not run dot, ie graphviz, to "
+             "produce visualization")
 
 df2, targets = encode_target(trainingData, "class")
 
@@ -175,27 +192,10 @@ testDF, testTargets = encode_target(testData, "class")
 testFeatures = list(testDF.columns[1:3])
 
 # testX only contains two 'x' and 'y' columns with their values
+testTargets = testDF["Target"]
 testX = testDF[testFeatures]
 
 testY = dt.predict(testX)
-
-def visualize_tree(tree, feature_names):
-    """Create tree png using graphviz.
-    Args
-    ----
-    tree -- scikit-learn DecsisionTree.
-    feature_names -- list of feature names.
-    """
-    with open("dt.dot", 'w') as f:
-        export_graphviz(tree, out_file=f,
-                        feature_names=feature_names)
-
-    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
-    try:
-        subprocess.check_call(command)
-    except:
-        exit("Could not run dot, ie graphviz, to "
-             "produce visualization")
 
 visualize_tree(dt, features)
 
@@ -209,3 +209,11 @@ print(trainingScore)
 
 testScore = dt.score(testX, testY)
 print(testScore)
+
+testErrors = 0
+
+for i in range(len(testY)):
+    if testY[i] != testTargets[i]:
+        testErrors += 1
+
+res = testErrors/2100.0

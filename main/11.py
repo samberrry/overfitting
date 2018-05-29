@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import os
 import subprocess
 
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
-# Prepares test data
+# COMPLETED
 
 NUMBER_OF_CLASS_A = 1800 # + class = classA
 NUMBER_OF_CLASS_B = 1200 # o class = classB
@@ -69,7 +68,7 @@ plt.title("Test Data")
 
 plt.axis('equal')
 
-plt.show()
+# plt.show()
 
 # TRAINING DATA:
 plt.plot(classAxTraining, classAyTraining, '+')
@@ -78,7 +77,7 @@ plt.title("Training Data")
 
 plt.axis('equal')
 
-plt.show()
+# plt.show()
 # =================DRAW Training Data END==================
 
 # =================Constructs Padnas Dataframe: Training
@@ -149,24 +148,31 @@ def encode_target(df, target_column):
 
     return (df_mod, targets)
 # ====================================================================
+# Visualize the tree =================================================
+# def visualize_tree(tree, feature_names):
+#     """Create tree png using graphviz.
+#     Args
+#     ----
+#     tree -- scikit-learn DecsisionTree.
+#     feature_names -- list of feature names.
+#     """
+#     with open("dt.dot", 'w') as f:
+#         export_graphviz(tree, out_file=f,
+#                         feature_names=feature_names)
+#
+#     command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+#     try:
+#         subprocess.check_call(command)
+#     except:
+#         exit("Could not run dot, ie graphviz, to "
+#              "produce visualization")
+# ====================================================================
 
 df2, targets = encode_target(trainingData, "class")
 
 features = list(df2.columns[1:3])
 y = df2["Target"]
 X = df2[features]
-
-condition = 10
-# while True:
-#     condition += 10
-#     dt = DecisionTreeClassifier(criterion="gini", max_leaf_nodes=20)
-#     dt.fit(X, y)
-#     # DO what you want
-#     if condition > 220:
-#         break
-
-dt = DecisionTreeClassifier(criterion= "gini", max_leaf_nodes= 20)
-dt.fit(X, y)
 
 # Prepare for testing the constructed moddel
 testDF, testTargets = encode_target(testData, "class")
@@ -176,36 +182,50 @@ testFeatures = list(testDF.columns[1:3])
 
 # testX only contains two 'x' and 'y' columns with their values
 testX = testDF[testFeatures]
+testTargets = testDF["Target"]
 
-testY = dt.predict(testX)
+trainingErrorLine = []
+testErrorLine = []
 
-def visualize_tree(tree, feature_names):
-    """Create tree png using graphviz.
-    Args
-    ----
-    tree -- scikit-learn DecsisionTree.
-    feature_names -- list of feature names.
-    """
-    with open("dt.dot", 'w') as f:
-        export_graphviz(tree, out_file=f,
-                        feature_names=feature_names)
+condition = 1
+while True:
+    condition += 1
+    dt = DecisionTreeClassifier(criterion="gini", max_leaf_nodes=condition)
+    dt.fit(X, y)
 
-    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
-    try:
-        subprocess.check_call(command)
-    except:
-        exit("Could not run dot, ie graphviz, to "
-             "produce visualization")
+    testY = dt.predict(testX)
 
-visualize_tree(dt, features)
+    numberOfTestErrors = 0
+    for i in range(len(testY)):
+        if testY[i] != testTargets[i]:
+            numberOfTestErrors += 1
 
-# What we have.. ?
-# Main training data features plus their classes
-# The trained Model
-# Main test data plus its predictions
+    testError = numberOfTestErrors/float(len(testY))
 
-trainingScore = dt.score(X,y)
-print(trainingScore)
+    print(numberOfTestErrors)
+    print(len(testY))
 
-testScore = dt.score(testX, testY)
-print(testScore)
+    trainingScore = dt.score(X, y)
+    testScore = dt.score(testX, testY)
+
+    trainingErrorLine.append([condition,trainingScore])
+    testErrorLine.append([condition,testError])
+
+    if condition > 200:
+        break
+
+# plt.figure(1)
+# plt.subplot(211)
+
+# plt.plot(*zip(*trainingErrorLine), marker='+', color='r', ls='')
+# plt.plot(*zip(*trainingErrorLine),color = 'r')
+
+plt.subplot(212)
+plt.plot(*zip(*testErrorLine), marker='+', color='b', ls='')
+plt.plot(*zip(*testErrorLine),color = 'b')
+
+plt.show()
+# At this point, What we have.. ?
+# - Main training data features plus their classes
+# - The trained Model
+# - Main test data plus its predictions
